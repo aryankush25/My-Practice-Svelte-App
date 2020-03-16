@@ -1,7 +1,7 @@
 <script>
   import Header from './Header.svelte'
   import MeetUpGrid from './MeetUpGrid.svelte'
-  import TextInput from './TextInput.svelte'
+  import EditMeetup from './EditMeetup.svelte'
   import Button from './Button.svelte'
 
   let meetups = [
@@ -15,6 +15,7 @@
         'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG/800px-Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG',
       address: '27th Nerd Road, 32523 New York',
       contactEmail: 'code@test.com',
+      isFavourite: false,
     },
     {
       id: 'm2',
@@ -25,28 +26,36 @@
         'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg',
       address: '27th Nerd Road, 32523 New York',
       contactEmail: 'swim@test.com',
+      isFavourite: false,
     },
   ]
 
-  let title = ''
-  let subtitle = ''
-  let description = ''
-  let imageUrl = ''
-  let address = ''
-  let contactEmail = ''
+  let isEditing = false
 
-  const addMeetUp = () => {
+  const addMeetUp = event => {
+    const values = event.detail
+
     const newMeetUpObj = {
       id: Math.random().toString(),
-      title,
-      subtitle,
-      description,
-      imageUrl,
-      address,
-      contactEmail,
+      ...values,
     }
 
     meetups = [newMeetUpObj, ...meetups]
+
+    isEditing = !isEditing
+  }
+
+  const toggleFavourite = ({ detail }) => {
+    const updatedMeetup = { ...meetups.find(m => m.id === detail) }
+    updatedMeetup.isFavourite = !updatedMeetup.isFavourite
+    const meetupIndex = meetups.findIndex(m => m.id === detail)
+    const updatedMeetups = [...meetups]
+    updatedMeetups[meetupIndex] = updatedMeetup
+    meetups = updatedMeetups
+  }
+
+  const closeModal = () => {
+    isEditing = !isEditing
   }
 </script>
 
@@ -54,54 +63,17 @@
   .meetups-section {
     margin-top: 5rem;
   }
-  form {
-    width: 30rem;
-    max-width: 90%;
-    margin: auto;
-  }
 </style>
 
 <Header />
 
 <section class="meetups-section">
 
-  <form on:submit|preventDefault={addMeetUp}>
-    <TextInput
-      id="title"
-      label="Title"
-      value={title}
-      on:input={event => (title = event.target.value)} />
-    <TextInput
-      id="subtitle"
-      label="Subtitle"
-      value={subtitle}
-      on:input={event => (subtitle = event.target.value)} />
-    <TextInput
-      id="address"
-      label="Address"
-      value={address}
-      on:input={event => (address = event.target.value)} />
-    <TextInput
-      id="imageUrl"
-      label="ImageUrl"
-      value={imageUrl}
-      on:input={event => (imageUrl = event.target.value)} />
-    <TextInput
-      id="contactEmail"
-      label="Contact Email"
-      value={contactEmail}
-      type="email"
-      on:input={event => (contactEmail = event.target.value)} />
-    <TextInput
-      id="description"
-      label="Description"
-      value={description}
-      controlType="textarea"
-      rows="3"
-      on:input={event => (description = event.target.value)} />
+  <Button on:click={() => (isEditing = !isEditing)}>Add Meetup</Button>
 
-    <Button type="submit" caption="Save" />
-  </form>
+  {#if isEditing}
+    <EditMeetup on:addMeetup={addMeetUp} on:close={closeModal} />
+  {/if}
+  <MeetUpGrid {meetups} on:toggleFavourite={toggleFavourite} />
 
-  <MeetUpGrid {meetups} />
 </section>

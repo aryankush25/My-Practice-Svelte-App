@@ -1,7 +1,7 @@
 <script>
-  export let type
-  export let caption
-  export let href
+  export let type = 'button'
+  export let href = null
+  export let disabled = false
 </script>
 
 <style>
@@ -83,7 +83,11 @@
 </style>
 
 {#if href}
-  <a {href}>{caption}</a>
+  <a {href}>
+    <slot />
+  </a>
 {:else}
-  <button {type}>{caption}</button>
+  <button {type} on:click {disabled}>
+    <slot />
+  </button>
 {/if}
