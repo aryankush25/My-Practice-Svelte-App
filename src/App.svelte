@@ -3,5 +3,5 @@
   import AdvanceElements from './AdvanceElements/App.svelte'
 </script>
 
-<!-- <MeetUpApp /> -->
-<AdvanceElements />
+<MeetUpApp />
+<!-- <AdvanceElements /> -->
