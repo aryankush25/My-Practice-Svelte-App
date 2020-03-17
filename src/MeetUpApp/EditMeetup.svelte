@@ -3,6 +3,7 @@
   import TextInput from './TextInput.svelte'
   import Button from './Button.svelte'
   import Modal from './Modal.svelte'
+  import meetupsStore from './meetups-store.js'
   import { isEmpty, isValidEmail } from '../helpers/validation.js'
 
   const dispatch = createEventDispatcher()
@@ -19,7 +20,7 @@
   $: descriptionValid = !isEmpty(description)
   $: imageUrlValid = !isEmpty(imageUrl)
   $: addressValid = !isEmpty(address)
-  $: contactEmailValid = !isValidEmail(contactEmail)
+  $: contactEmailValid = isValidEmail(contactEmail)
 
   $: formIsValid =
     titleValid &&
@@ -30,7 +31,7 @@
     contactEmailValid
 
   const addMeetUp = () => {
-    dispatch('addMeetup', {
+    meetupsStore.addMeetup({
       title,
       subtitle,
       description,
@@ -38,6 +39,8 @@
       address,
       contactEmail,
     })
+
+    dispatch('close')
   }
 
   const close = () => {
