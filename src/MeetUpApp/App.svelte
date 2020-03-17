@@ -9,13 +9,14 @@
   let isEditing = false
   let showDetails = false
   let currentId
+  let editMeetUpId = null
 
   const closeModal = () => {
     isEditing = !isEditing
+    editMeetUpId = null
   }
 
   const handelShowDetails = ({ detail }) => {
-    console.log('#### ', detail)
     currentId = detail
     showDetails = true
   }
@@ -23,6 +24,11 @@
   const handelHideDetails = () => {
     currentId = null
     showDetails = false
+  }
+
+  const handelEditMeetupData = ({ detail }) => {
+    isEditing = !isEditing
+    editMeetUpId = detail
   }
 </script>
 
@@ -42,10 +48,16 @@
     <Button on:click={() => (isEditing = !isEditing)}>Add Meetup</Button>
 
     {#if isEditing}
-      <EditMeetup on:close={closeModal} />
+      <svelte:component
+        this={EditMeetup}
+        on:close={closeModal}
+        id={editMeetUpId} />
     {/if}
 
-    <MeetUpGrid meetups={$meetupsStore} on:showDetails={handelShowDetails} />
+    <MeetUpGrid
+      meetups={$meetupsStore}
+      on:showDetails={handelShowDetails}
+      on:edit={handelEditMeetupData} />
   {/if}
 
 </section>

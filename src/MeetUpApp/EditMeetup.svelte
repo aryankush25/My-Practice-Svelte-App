@@ -8,12 +8,27 @@
 
   const dispatch = createEventDispatcher()
 
+  export let id
+
   let title = ''
   let subtitle = ''
   let description = ''
   let imageUrl = ''
   let address = ''
   let contactEmail = ''
+
+  if (id) {
+    const unsubscribe = meetupsStore.subscribe(items => {
+      const selectedMeetup = items.find(item => item.id === id)
+      title = selectedMeetup.title
+      subtitle = selectedMeetup.subtitle
+      description = selectedMeetup.description
+      imageUrl = selectedMeetup.imageUrl
+      address = selectedMeetup.address
+      contactEmail = selectedMeetup.contactEmail
+    })
+    unsubscribe()
+  }
 
   $: titleValid = !isEmpty(title)
   $: subtitleValid = !isEmpty(subtitle)
@@ -31,19 +46,35 @@
     contactEmailValid
 
   const addMeetUp = () => {
-    meetupsStore.addMeetup({
-      title,
-      subtitle,
-      description,
-      imageUrl,
-      address,
-      contactEmail,
-    })
+    if (id) {
+      meetupsStore.updateMeetup(id, {
+        title,
+        subtitle,
+        description,
+        imageUrl,
+        address,
+        contactEmail,
+      })
+    } else {
+      meetupsStore.addMeetup({
+        title,
+        subtitle,
+        description,
+        imageUrl,
+        address,
+        contactEmail,
+      })
+    }
 
     dispatch('close')
   }
 
   const close = () => {
+    dispatch('close')
+  }
+
+  const deleteMeetup = () => {
+    meetupsStore.deleteMeetup(id)
     dispatch('close')
   }
 </script>
@@ -110,5 +141,8 @@
       Save
     </Button>
     <Button type="submit" on:click={close}>Cancle</Button>
+    {#if id}
+      <Button type="submit" on:click={deleteMeetup}>Delete</Button>
+    {/if}
   </div>
 </Modal>
