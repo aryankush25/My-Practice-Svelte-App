@@ -3,11 +3,23 @@
   import MeetUpFilter from './MeetUpFilter.svelte'
 
   export let meetups
+
+  let favsOnly = false
+
+  $: filteredMeetups = favsOnly
+    ? meetups.filter(meetUp => meetUp.isFavourite)
+    : meetups
+
+  console.log('$$$$ meetups', meetups)
+
+  const setFilter = event => {
+    favsOnly = event.detail
+  }
 </script>
 
-<MeetUpFilter />
+<MeetUpFilter on:select={setFilter} {favsOnly} />
 
-{#each meetups as meetup}
+{#each filteredMeetups as meetup}
   <MeetUpItem
     id={meetup.id}
     title={meetup.title}

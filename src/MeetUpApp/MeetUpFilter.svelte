@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte'
+  export let favsOnly
 
   const dispatch = createEventDispatcher()
 </script>
@@ -41,16 +42,18 @@
 
 <div>
   <button
+    class:active={!favsOnly}
     type="button"
     on:click={() => {
-      dispatch('select', 0)
+      dispatch('select', false)
     }}>
     All
   </button>
   <button
+    class:active={favsOnly}
     type="button"
     on:click={() => {
-      dispatch('select', 1)
+      dispatch('select', true)
     }}>
     Favourites
   </button>
