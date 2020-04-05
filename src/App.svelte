@@ -4,6 +4,6 @@
   import Animations from './Animations/App.svelte'
 </script>
 
-<!-- <MeetUpApp /> -->
+<MeetUpApp />
 <!-- <AdvanceElements /> -->
-<Animations />
+<!-- <Animations /> -->
