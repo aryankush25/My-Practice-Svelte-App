@@ -1,8 +1,11 @@
 <script>
   import MeetUpItem from './MeetUpItem.svelte'
+  import MeetUpFilter from './MeetUpFilter.svelte'
 
   export let meetups
 </script>
+
+<MeetUpFilter />
 
 {#each meetups as meetup}
   <MeetUpItem
