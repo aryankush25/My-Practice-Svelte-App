@@ -6,6 +6,29 @@
   import MeetupDetails from './MeetupDetails.svelte'
   import meetupsStore from './meetups-store.js'
 
+  fetch('https://my-practice-svelte-app.firebaseio.com/meetups.json')
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('An error occured please try again')
+      }
+      return res.json()
+    })
+    .then(data => {
+      const loadedMeetups = []
+
+      for (const key in data) {
+        loadedMeetups.push({
+          ...data[key],
+          id: key,
+        })
+      }
+
+      meetupsStore.setMeetups(loadedMeetups.reverse())
+    })
+    .catch(error => {
+      console.log('Error', error)
+    })
+
   let isEditing = false
   let showDetails = false
   let currentId

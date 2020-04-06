@@ -16,7 +16,20 @@
   export let isFavourite
 
   const toggleFavourite = () => {
-    meetupsStore.toggleFavourite(id)
+    fetch(`https://my-practice-svelte-app.firebaseio.com/meetups/${id}.json`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isFavourite: !isFavourite }),
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('An error occured please try again')
+        }
+        meetupsStore.toggleFavourite(id)
+      })
+      .catch(error => {
+        console.log('Error', error)
+      })
   }
 </script>
 

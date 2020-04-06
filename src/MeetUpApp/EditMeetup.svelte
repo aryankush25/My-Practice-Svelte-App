@@ -47,23 +47,72 @@
 
   const addMeetUp = () => {
     if (id) {
-      meetupsStore.updateMeetup(id, {
-        title,
-        subtitle,
-        description,
-        imageUrl,
-        address,
-        contactEmail,
-      })
+      fetch(
+        `https://my-practice-svelte-app.firebaseio.com/meetups/${id}.json`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            subtitle,
+            description,
+            imageUrl,
+            address,
+            contactEmail,
+          }),
+        },
+      )
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('An error occured please try again')
+          }
+          meetupsStore.updateMeetup(id, {
+            title,
+            subtitle,
+            description,
+            imageUrl,
+            address,
+            contactEmail,
+          })
+        })
+        .catch(error => {
+          console.log('Error', error)
+        })
     } else {
-      meetupsStore.addMeetup({
-        title,
-        subtitle,
-        description,
-        imageUrl,
-        address,
-        contactEmail,
+      fetch('https://my-practice-svelte-app.firebaseio.com/meetups.json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          subtitle,
+          description,
+          imageUrl,
+          address,
+          contactEmail,
+          isFavourite: false,
+        }),
       })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('An error occured please try again')
+          }
+          return res.json()
+        })
+        .then(data => {
+          meetupsStore.addMeetup({
+            title,
+            subtitle,
+            description,
+            imageUrl,
+            address,
+            contactEmail,
+            isFavourite: false,
+            id: data.name,
+          })
+        })
+        .catch(error => {
+          console.log('Error', error)
+        })
     }
 
     dispatch('close')
@@ -74,7 +123,18 @@
   }
 
   const deleteMeetup = () => {
-    meetupsStore.deleteMeetup(id)
+    fetch(`https://my-practice-svelte-app.firebaseio.com/meetups/${id}.json`, {
+      method: 'DELETE',
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('An error occured please try again')
+        }
+        meetupsStore.deleteMeetup(id)
+      })
+      .catch(error => {
+        console.log('Error', error)
+      })
     dispatch('close')
   }
 </script>
